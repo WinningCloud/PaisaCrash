@@ -2,8 +2,8 @@
 // returns a new one, so it is easy to test and the voice agent can read it.
 import { createRng } from './rng.js'
 
-export const SAVE_VERSION = 1
-export const TOTAL_YEARS = 10
+export const SAVE_VERSION = 2
+export const TOTAL_YEARS = 5
 export const START_AGE = 22
 
 const INFLATION = 0.06

@@ -4,17 +4,22 @@ const router = Router()
 
 const SIGNED_URL_API = 'https://api.elevenlabs.io/v1/convai/conversation/get-signed-url'
 
-export const voiceConfigured = () => Boolean(process.env.ELEVENLABS_AGENT_ID?.trim())
+// "game" = Paisa Pal inside the game, "home" = the general money coach on the title screen
+const AGENT_ENV = { game: 'ELEVENLABS_AGENT_ID', home: 'ELEVENLABS_HOME_AGENT_ID' }
+const agentIdFor = (kind) => process.env[AGENT_ENV[kind]]?.trim()
 
-// GET /api/elevenlabs/signed-url
+export const voiceConfigured = (kind = 'game') => Boolean(agentIdFor(kind))
+
+// GET /api/elevenlabs/signed-url?agent=game|home
 // Private agent (API key set): returns { signedUrl }, valid for ~15 minutes.
 // Public agent (agent id only): returns { agentId }; the id is not a secret.
-router.get('/signed-url', async (_req, res) => {
-  const agentId = process.env.ELEVENLABS_AGENT_ID?.trim()
+router.get('/signed-url', async (req, res) => {
+  const kind = req.query.agent === 'home' ? 'home' : 'game'
+  const agentId = agentIdFor(kind)
   const apiKey = process.env.ELEVENLABS_API_KEY?.trim()
 
   if (!agentId) {
-    return res.status(503).json({ error: 'Voice agent is not configured (ELEVENLABS_AGENT_ID missing).' })
+    return res.status(503).json({ error: `Voice agent is not configured (${AGENT_ENV[kind]} missing).` })
   }
   if (!apiKey) return res.json({ agentId })
 

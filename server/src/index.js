@@ -11,7 +11,7 @@ app.use(cors({ origin: CLIENT_ORIGIN.split(',').map((o) => o.trim()) }))
 app.use(express.json())
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, voice: voiceConfigured() })
+  res.json({ ok: true, voice: voiceConfigured('game'), homeVoice: voiceConfigured('home') })
 })
 
 app.use('/api/elevenlabs', elevenlabs)
@@ -20,5 +20,5 @@ app.use('/api', (_req, res) => res.status(404).json({ error: 'Not found' }))
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
-  console.log(voiceConfigured() ? 'Voice agent: configured' : 'Voice agent: NOT configured (game runs in text mode)')
+  console.log(`Voice agents: game ${voiceConfigured('game') ? 'ok' : 'NOT configured'}, home ${voiceConfigured('home') ? 'ok' : 'NOT configured'} (the game runs in text mode without them)`)
 })

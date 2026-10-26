@@ -16,7 +16,7 @@ export default [
     emoji: '📦',
     category: 'job',
     minYear: 2,
-    maxYear: 9,
+    maxYear: 5,
     baseWeight: 1,
     requires: { notFlags: ['jobLost'] },
     weightModifiers: [{ ifFlag: 'startupJob', multiply: 2.5 }],
@@ -98,8 +98,8 @@ export default [
     title: 'Weekend Side Hustle',
     emoji: '🧑‍🏫',
     category: 'job',
-    minYear: 2,
-    maxYear: 8,
+    minYear: 1,
+    maxYear: 3,
     baseWeight: 1.4,
     requires: { notFlags: ['hasSideHustle'] },
     narration: (s) => `A local coaching centre wants you to teach weekend classes for ${inr(amt(s, 7000))} a month. Goodbye, lazy Sundays?`,
@@ -166,8 +166,8 @@ export default [
     title: 'Promotion... in Mumbai',
     emoji: '🏙️',
     category: 'job',
-    minYear: 3,
-    maxYear: 8,
+    minYear: 2,
+    maxYear: 5,
     baseWeight: 1.2,
     requires: { notFlags: ['relocated'] },
     narration: (s) => `You're promoted: ${inr(s.monthlyIncome + raise(s, 0.35))} a month, a 35% hike! The catch: the role is in Mumbai, where rent is nearly double.`,
@@ -206,8 +206,8 @@ export default [
     title: 'Shaadi Season',
     emoji: '💍',
     category: 'family',
-    minYear: 3,
-    maxYear: 8,
+    minYear: 2,
+    maxYear: 4,
     baseWeight: 1.6,
     requires: { notFlags: ['married'] },
     narration: (s) => `You're getting married! The relatives want 600 guests, a sangeet and a destination mehendi. You have ${inr(Math.max(0, s.cash))} saved.`,
@@ -224,7 +224,7 @@ export default [
           creditScore: -10,
         }),
         setFlags: ['married', 'weddingLoan'],
-        schedule: [{ eventId: 'wedding-loan-squeeze', inYears: 2 }],
+        schedule: [{ eventId: 'wedding-loan-squeeze', inYears: 1 }],
         outcomeText: 'Six hundred guests, a drone shot and a white horse. The first EMI message arrives during the honeymoon.',
         lesson: 'A 5-year loan for a 3-day party means you keep paying for the wedding long after the photos fade.',
       },
@@ -258,8 +258,8 @@ export default [
     narration: (s) => {
       const emi = s.emis.find((e) => e.label === 'Wedding loan')
       return emi
-        ? `Two years after the wedding, the loan EMI still eats ${pctOf(emi.amount, s.monthlyIncome)}% of your salary. Now the bank offers to "top up" the loan for a honeymoon redo.`
-        : 'Two years after the wedding, your loans still eat into every payslip. Now the bank offers a "top-up" for a honeymoon redo.'
+        ? `A year after the wedding, the loan EMI still eats ${pctOf(emi.amount, s.monthlyIncome)}% of your salary. Now the bank offers to "top up" the loan for a honeymoon redo.`
+        : 'A year after the wedding, your loans still eat into every payslip. Now the bank offers a "top-up" for a honeymoon redo.'
     },
     choices: [
       {
@@ -295,7 +295,7 @@ export default [
     emoji: '🏍️',
     category: 'lifestyle',
     minYear: 1,
-    maxYear: 6,
+    maxYear: 3,
     baseWeight: 1.3,
     requires: { notFlags: ['ownsBike', 'ownsCar'] },
     narration: (s) => `Two hours a day on crowded buses is killing you. The showroom offers a ${inr(bikePrice(s))} bike with zero down payment and "easy EMIs".`,
@@ -409,7 +409,7 @@ export default [
     emoji: '🎓',
     category: 'education',
     minYear: 1,
-    maxYear: 6,
+    maxYear: 3,
     baseWeight: 1.2,
     requires: { notFlags: ['didCourse'] },
     narration: (s) => `Your manager hints that people with cloud certifications get promoted faster. A reputed course costs ${inr(amt(s, 40000))}, and an ed-tech ad promises a "100% placement guarantee" with an instant loan.`,
@@ -481,6 +481,7 @@ export default [
     emoji: '🤝',
     category: 'family',
     minYear: 1,
+    maxYear: 4,
     baseWeight: 1,
     narration: (s) => `Your college friend calls at midnight. He needs ${inr(amt(s, 30000))} urgently and swears he'll return it "next month, pakka".`,
     choices: [
@@ -571,7 +572,7 @@ export default [
     minYear: 2,
     baseWeight: 1,
     repeatable: true,
-    cooldown: 4,
+    cooldown: 3,
     narration: 'Your landlord raises the rent by 15% "because of market rates" and keeps the maintenance charges on top. The agreement renews on Monday.',
     choices: [
       {

@@ -32,3 +32,12 @@ export const formatMonths = (m) => {
   const v = safe(m)
   return v >= 10 ? `${Math.round(v)} months` : `${v.toFixed(1)} months`
 }
+
+// 5 -> "five", for copy that should read like a sentence
+export const numberWord = (n) =>
+  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] ?? String(n)
+
+export const numberWordCap = (n) => {
+  const w = numberWord(n)
+  return w[0].toUpperCase() + w.slice(1)
+}

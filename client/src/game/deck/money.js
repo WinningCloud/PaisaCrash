@@ -42,7 +42,7 @@ export default [
         hint: (s) => `Seed it with ${inr(amt(s, 5000))}, then use the SIP slider`,
         effects: (s) => ({ cash: -amt(s, 5000), investments: amt(s, 5000), happiness: 3 }),
         setFlags: ['startedSipEarly'],
-        schedule: [{ eventId: 'compounding-bonus', atYear: 8 }],
+        schedule: [{ eventId: 'compounding-bonus', atYear: 5 }],
         outcomeText: 'First instalment invested. Keep the SIP slider above zero on your budget and let time do the heavy lifting.',
         lesson: 'Starting at 22 instead of 30 can nearly double what you have at 60. Time is the secret ingredient.',
       },
@@ -73,8 +73,8 @@ export default [
     scheduledOnly: true,
     requires: { flags: ['startedSipEarly'], minInvestments: 1 },
     narration: (s) => (s.flags.hasSIP
-      ? `That SIP you started at 22 just hit a milestone: ${inr(s.investments)}. Your returns are now earning returns of their own.`
-      : `That SIP you started at 22? You stopped feeding it along the way. It is worth ${inr(s.investments)}, far less than it could have been.`),
+      ? `That SIP you started early just hit a milestone: ${inr(s.investments)}. Your returns are now earning returns of their own.`
+      : `That SIP you started early? You stopped feeding it along the way. It is worth ${inr(s.investments)}, far less than it could have been.`),
     choices: [
       {
         id: 'stay',
@@ -102,7 +102,7 @@ export default [
     emoji: '🤑',
     category: 'investing',
     minYear: 2,
-    maxYear: 9,
+    maxYear: 5,
     baseWeight: 1.3,
     narration: 'Your school WhatsApp group is buzzing: "Insider news! This ₹12 penny stock will 10x by Diwali. The operator is buying!"',
     choices: [
@@ -124,7 +124,7 @@ export default [
     emoji: '🎰',
     category: 'investing',
     minYear: 3,
-    maxYear: 9,
+    maxYear: 5,
     baseWeight: 0.9,
     narration: 'A finfluencer posing with a rented Lamborghini sells an F&O trading course: "Make ₹5,000 a day from your phone!" The course costs ₹25,000.',
     choices: [
@@ -161,6 +161,7 @@ export default [
     emoji: '📉',
     category: 'investing',
     minYear: 2,
+    maxYear: 4,
     baseWeight: 1.2,
     requires: { minInvestments: 15000 },
     narration: (s) => `Markets fall 20% in a month. Your ${inr(s.investments)} portfolio is bleeding red, and social media says it is all going to zero.`,
@@ -237,7 +238,7 @@ export default [
     emoji: '🗂️',
     category: 'tax',
     minYear: 2,
-    maxYear: 9,
+    maxYear: 3,
     baseWeight: 1.4,
     narration: 'It\'s March. Your bank\'s relationship manager calls: "Save tax under 80C! Our endowment plan has guaranteed returns. Only ₹4,000 a month for 15 years."',
     choices: [
@@ -377,7 +378,7 @@ export default [
     minYear: 2,
     baseWeight: 1.2,
     repeatable: true,
-    cooldown: 3,
+    cooldown: 2,
     narration: (s) => `Performance bonus credited: ${inr(bonusOf(s))}! Within an hour your phone is full of "Goa plan??" messages.`,
     choices: [
       {

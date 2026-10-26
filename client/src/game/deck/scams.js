@@ -9,6 +9,7 @@ export default [
     emoji: '📩',
     category: 'scam',
     minYear: 1,
+    maxYear: 4,
     baseWeight: 2,
     narration: 'SMS from "BNK-ALERT": Dear customer, your KYC expires TODAY and your account will be BLOCKED. Update now at kyc-update-bank.in.',
     choices: [

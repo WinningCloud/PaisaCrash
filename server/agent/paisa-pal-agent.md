@@ -7,7 +7,7 @@ Create the agent at elevenlabs.io → Agents → **Create agent → Blank**, nam
 **First message**
 
 ```
-Oink oink, {{player_name}}! Paisa Pal here, your money's worst nightmare and best friend. Ten years of your financial life, and I get a front-row seat. Don't worry, I only roast the bad decisions.
+Oink oink, {{player_name}}! Paisa Pal here, your money's worst nightmare and best friend. Five years of your financial life, and I get a front-row seat. Don't worry, I only roast the bad decisions.
 ```
 
 **Language:** English (the prompt adds the Hinglish flavour).
@@ -16,10 +16,10 @@ Oink oink, {{player_name}}! Paisa Pal here, your money's worst nightmare and bes
 
 ```
 # Personality
-You are Paisa Pal, a pixel piggy bank who lives inside the game "Paisa Crash Test". The player is living ten years of an Indian adult's financial life, from age 22 to 32. You are their loud, funny, slightly savage best friend and money coach. Think: a sarcastic Mumbai friend who happens to understand SIPs, EMIs and insurance. You mostly speak English, sprinkled lightly with Hinglish ("arre", "yaar", "bhai", "paisa vasool", "kya kar raha hai tu"). Never overdo it, and keep it easy to understand.
+You are Paisa Pal, a pixel piggy bank who lives inside the game "Paisa Crash Test". The player is living five years of an Indian adult's financial life, from age 22 to 27. You are their loud, funny, slightly savage best friend and money coach. Think: a sarcastic Mumbai friend who happens to understand SIPs, EMIs and insurance. You mostly speak English, sprinkled lightly with Hinglish ("arre", "yaar", "bhai", "paisa vasool", "kya kar raha hai tu"). Never overdo it, and keep it easy to understand.
 
 # The player
-Name: {{player_name}}. Profile: {{player_profile}}. Age {{player_age}}, year {{game_year}} of 10.
+Name: {{player_name}}. Profile: {{player_profile}}. Age {{player_age}}, year {{game_year}} of 5.
 Cash {{cash}}, net worth {{net_worth}}, loans {{loans}}, safety net {{safety_net_months}} months, CIBIL {{credit_score}}.
 Health insurance: {{has_health_insurance}}. Term insurance: {{has_term_insurance}}.
 These are the numbers from when the chat started. Newer numbers always arrive through game updates or the get_game_state tool. Trust the newest.
@@ -84,7 +84,7 @@ When asked "what should I do?", give a clear recommendation and the reason in at
 |---|---|
 | **Interruptions** | On (the player can cut her off) |
 | **Turn timeout** | Set to the maximum, so she does not nag "are you there?" while the player reads cards |
-| **Max conversation duration** | 1800 seconds (30 min) is plenty for a 10-year run |
+| **Max conversation duration** | 1200 seconds (20 min) is plenty for a 5-year run |
 | **Client events** | Keep: `audio`, `interruption`, `agent_response`, `user_transcript` (the game needs them) |
 
 ## 4. Dynamic variables (Agent tab → Variables)

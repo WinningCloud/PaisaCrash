@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
-import { createInitialState, drawDueNow, drawEvents, resolveChoice, setBudget, simulateYear } from '../game/engine.js'
+import {
+  SAVE_VERSION, createInitialState, drawDueNow, drawEvents, resolveChoice, setBudget, simulateYear,
+} from '../game/engine.js'
 import { DECK, getEvent } from '../game/events.js'
 
 const SAVE_KEY = 'paisa-crash-test/save-v1'
@@ -15,7 +17,7 @@ function loadSave() {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
     const save = JSON.parse(raw)
-    if (save?.game?.version !== 1 || !RESUMABLE.includes(save.phase)) return null
+    if (save?.game?.version !== SAVE_VERSION || !RESUMABLE.includes(save.phase)) return null
     // A save from mid-year whose cards no longer exist falls back to the budget screen
     if (save.phase === 'event' && !validTurn(save.game)) {
       return { phase: 'budget', game: { ...save.game, turn: null } }

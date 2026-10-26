@@ -29,7 +29,9 @@ function matchChoice(choices, raw, game) {
 export default function useVoiceAgent() {
   const { phase, game, lastReport, dispatch } = useGame()
   const { toast } = useToast()
-  const [available, setAvailable] = useState(null) // null while checking
+  const [available, setAvailable] = useState(null) // in-game agent; null while checking
+  const [homeAvailable, setHomeAvailable] = useState(null) // title-screen coach
+  const [kind, setKind] = useState(null) // 'game' | 'home' while a session is open
   const [starting, setStarting] = useState(false)
   const [agentLine, setAgentLine] = useState(null)
 
@@ -41,11 +43,13 @@ export default function useVoiceAgent() {
     onConnect: () => setStarting(false),
     onDisconnect: () => {
       setStarting(false)
+      setKind(null)
       setAgentLine(null)
     },
     onError: (message) => {
       console.warn('[voice]', message)
       setStarting(false)
+      setKind(null)
       toast(/permission|denied|notallowed|microphone/i.test(String(message))
         ? 'Microphone blocked. Allow mic access in the address bar, then try again.'
         : 'Voice connection failed. Playing in text mode.', { kind: 'danger' })
@@ -63,17 +67,22 @@ export default function useVoiceAgent() {
 
   // Is the server up with an agent configured? Re-checked every 5s until it is, so
   // starting the server after the page loaded fixes the button without a reload.
-  const availableRef = useRef(null)
-  availableRef.current = available
+  const allOk = useRef(false)
   useEffect(() => {
     let alive = true
+    const apply = (game, home) => {
+      if (!alive) return
+      allOk.current = game && home
+      setAvailable(game)
+      setHomeAvailable(home)
+    }
     const check = () =>
       fetch('/api/health')
         .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .then((h) => alive && setAvailable(Boolean(h.voice)))
-        .catch(() => alive && setAvailable(false))
+        .then((h) => apply(Boolean(h.voice), Boolean(h.homeVoice)))
+        .catch(() => apply(false, false))
     check()
-    const t = setInterval(() => availableRef.current !== true && check(), 5000)
+    const t = setInterval(() => !allOk.current && check(), 5000)
     return () => {
       alive = false
       clearInterval(t)
@@ -128,14 +137,22 @@ export default function useVoiceAgent() {
 
   // Announce each new step once: silent state update now, spoken reaction when she's free
   useEffect(() => {
-    if (!connected) return
+    if (!connected || kind !== 'game') return // the title-screen coach gets no game context
     const step = describeStep({ phase, game, lastReport })
     if (!step || step.key === lastKey.current) return
     lastKey.current = step.key
     controls.current.sendContextualUpdate(step.context)
     pending.current = step.say // a newer step replaces a stale one that never got spoken
     flush()
-  }, [connected, phase, game, lastReport, flush])
+  }, [connected, kind, phase, game, lastReport, flush])
+
+  // Each agent only lives on its own screens: the coach on the title screen, Paisa Pal in the game
+  useEffect(() => {
+    if (!connected) return
+    if ((kind === 'home' && phase !== 'title') || (kind === 'game' && phase === 'title')) {
+      controls.current.endSession()
+    }
+  }, [connected, kind, phase])
 
   // When she finishes talking, say the next queued thing. The first finish is the greeting.
   useEffect(() => {
@@ -169,19 +186,22 @@ export default function useVoiceAgent() {
 
   /* ---------- Controls ---------- */
 
-  const connect = useCallback(async () => {
+  // which: 'game' (in-game Paisa Pal) or 'home' (title-screen money coach)
+  const connect = useCallback(async (which = 'game') => {
     if (starting || connected) return
+    const target = which === 'home' ? 'home' : 'game'
+    const setOk = target === 'home' ? setHomeAvailable : setAvailable
     setStarting(true)
     try {
-      const res = await fetch('/api/elevenlabs/signed-url').catch(() => null)
+      const res = await fetch(`/api/elevenlabs/signed-url?agent=${target}`).catch(() => null)
       const body = res ? await res.json().catch(() => null) : null
       if (!res || !res.ok || !body) {
-        setAvailable(false)
+        setOk(false)
         setStarting(false)
         toast(body?.error ?? 'Voice server not reachable. Start it with: cd server && npm run dev', { kind: 'danger', ms: 6000 })
         return
       }
-      setAvailable(true)
+      setOk(true)
       const cfg = body
       const session = cfg.signedUrl
         ? { signedUrl: cfg.signedUrl, connectionType: 'websocket' }
@@ -190,11 +210,12 @@ export default function useVoiceAgent() {
           : null
       if (!session) throw new Error('no agent in response')
       armed.current = false
-      controls.current.startSession({
-        ...session,
-        dynamicVariables: dynamicVariables(live.current.game),
-        clientTools,
-      })
+      setKind(target)
+      controls.current.startSession(
+        target === 'home'
+          ? session
+          : { ...session, dynamicVariables: dynamicVariables(live.current.game), clientTools },
+      )
     } catch (err) {
       console.warn('[voice]', err)
       setStarting(false)
@@ -214,5 +235,5 @@ export default function useVoiceAgent() {
 
   const status = connected ? (isSpeaking ? 'speaking' : 'listening') : starting || connState === 'connecting' ? 'connecting' : 'idle'
 
-  return { status, available, connected, muted: isMuted, agentLine, connect, disconnect, toggleMute }
+  return { status, available, homeAvailable, kind, connected, muted: isMuted, agentLine, connect, disconnect, toggleMute }
 }

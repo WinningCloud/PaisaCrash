@@ -16,8 +16,11 @@ function Bars({ active }) {
   )
 }
 
-export default function VoiceButton({ voice }) {
-  const { status, available, muted, connect, disconnect, toggleMute } = voice
+// kind: 'game' (in-game Paisa Pal, shown in the HUD) or 'home' (title-screen money coach)
+export default function VoiceButton({ voice, kind = 'game', size = 'sm' }) {
+  const { muted, connect, disconnect, toggleMute } = voice
+  const available = kind === 'home' ? voice.homeAvailable : voice.available
+  const status = !voice.kind || voice.kind === kind ? voice.status : 'idle'
   const [icon, text] = LABELS[status]
   const offline = available === false && status === 'idle'
   const live = status === 'listening' || status === 'speaking'
@@ -26,9 +29,9 @@ export default function VoiceButton({ voice }) {
     <div className="voice">
       <PixelButton
         variant={live ? 'pink' : offline ? 'ghost' : 'cyan'}
-        size="sm"
+        size={size}
         className="voice__btn"
-        onClick={live ? disconnect : connect}
+        onClick={() => (live ? disconnect() : connect(kind))}
         disabled={status === 'connecting'}
         aria-label={live ? 'End voice chat with Paisa Pal' : 'Talk to Paisa Pal by voice'}
       >

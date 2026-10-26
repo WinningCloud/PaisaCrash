@@ -3,9 +3,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Hud from './components/Hud.jsx'
 import Mascot from './components/Mascot.jsx'
 import { useToast } from './components/Toast.jsx'
-import { emergencyMonths, monthlySurplus } from './game/engine.js'
+import { START_AGE, TOTAL_YEARS, emergencyMonths, monthlySurplus } from './game/engine.js'
 import { getEvent } from './game/events.js'
-import { formatDelta, formatINR } from './game/format.js'
+import { formatDelta, formatINR, numberWordCap } from './game/format.js'
 import BudgetScreen from './screens/BudgetScreen.jsx'
 import CharacterSelect from './screens/CharacterSelect.jsx'
 import EventScreen from './screens/EventScreen.jsx'
@@ -56,7 +56,7 @@ function mascotLine(phase, game) {
   if (phase === 'end') {
     return game.status === 'bankrupt'
       ? 'Ouch. That was a debt spiral. Want to try again with a bigger safety net?'
-      : 'Ten years done! Every rupee you saved early is now pulling its weight.'
+      : `${numberWordCap(TOTAL_YEARS)} years done! Every rupee you saved early is now pulling its weight.`
   }
   const surplus = monthlySurplus(game)
   const em = emergencyMonths(game)
@@ -65,7 +65,7 @@ function mascotLine(phase, game) {
   if (em < 1) return 'Your safety net covers less than a month. Feed the emergency fund first!'
   if (em < 3) return `You can survive ${em.toFixed(1)} months without salary. Aim for 3 to 6.`
   if (game.year === 1) return 'Slide to split your leftover money. Tap any blue word if it sounds like jargon.'
-  return 'Safety net looks solid. A steady SIP now becomes a big number by age 32.'
+  return `Safety net looks solid. A steady SIP now becomes a big number by age ${START_AGE + TOTAL_YEARS}.`
 }
 
 function mascotMood(phase, game) {
@@ -103,6 +103,7 @@ export default function App() {
       <TitleScreen
         canContinue={canContinue}
         savedGame={savedPhase ? game : null}
+        voice={voice}
         onNew={() => dispatch({ type: 'NEW_GAME' })}
         onContinue={() => dispatch({ type: 'CONTINUE' })}
       />
